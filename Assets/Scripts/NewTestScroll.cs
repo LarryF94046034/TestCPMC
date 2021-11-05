@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TestScroll : MonoBehaviour
+public class NewTestScroll : MonoBehaviour
 {
     public List<GameObject> Buttons;
     public GameObject Parent;
@@ -11,11 +11,11 @@ public class TestScroll : MonoBehaviour
 
 
     public ScrollRect scrollView;
-    
+
 
     public List<int> leftNum = new List<int>();
     public List<int> rightNum = new List<int>();
-    
+
     public bool firstTime = false;
 
     public ScrollHelper ScrollHelper;
@@ -56,40 +56,18 @@ public class TestScroll : MonoBehaviour
     private Image horizonScrollbarImage;
 
     [SerializeField]
-    public float scrollAmount=0;
+    public float scrollAmount = 0;
 
-    [SerializeField]
-    public float overToUpdateAmount = 0.3f;
+    
 
-    [SerializeField]
-    public int nowRowDir = 0;
-
-    [SerializeField]
-    public int nowIndex = 0;
-    [SerializeField]
-    private bool setNowIndex = false;
-
-    [SerializeField]
-    public List<int> dataList = new List<int>();
-    [SerializeField]
-    public int allAmount = 0;   //Á`¼Æ
-
-
-    public Scrollbar verticalBar;
 
     // Start is called before the first frame update
     void Start()
     {
-        //scrollHelper.SetScrollRectHeight(scrollRectReactTran,allowYSpacing,blockHeight,allowBlockYNum);
-        //scrollHelper.SetScrollRectWidth(scrollRectReactTran, allowXSpacing,blockWidth, allowBlockXNum);
-        ScrollHelper.InitialData(allowBlockXNum, allowBlockYNum+outsideBlockYNum*2, dataList);
         ScrollHelper.FillScrollRect(buttonPrefab, fillParent, allowBlockXNum, allowBlockYNum + outsideBlockYNum * 2, btns);
         ScrollHelper.SetScrollRectWH(scrollRectReactTran, allowXSpacing, blockWidth, allowBlockXNum, allowYSpacing, blockHeight, allowBlockYNum);
-        ScrollHelper.SetContentHeight(contentRectTran, scrollRectReactTran, allowBlockYNum, outsideBlockYNum, allowYSpacing, blockHeight);
-        
-        ScrollHelper.SetContentPosition(contentRectTran, allowXSpacing, allowBlockXNum,btns);
-        
-        //ScrollHelper.SetScrollRectHandleMidPoint(scrollRect,0.5f);
+        //ScrollHelper.SetContentHeight(contentRectTran, scrollRectReactTran);
+        ScrollHelper.SetScrollRectHandleMidPoint(scrollRect,1.0f);
         ScrollHelper.SetScrollRectHorizontalOne(scrollRect);
         ScrollHelper.CloseHorizontalHandle(horizonHandleImage, horizonScrollbarImage);
     }
@@ -97,13 +75,6 @@ public class TestScroll : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ScrollHelper.OverValueUpdateData(/*scrollRect*/verticalBar, ref scrollAmount, overToUpdateAmount, ref nowRowDir, dataList, btns, allowBlockXNum, allowBlockYNum, outsideBlockYNum, ref nowIndex);
-        ScrollHelper.BelowValueUpdateData(/*scrollRect*/verticalBar, ref scrollAmount, overToUpdateAmount, ref nowRowDir, dataList, btns, allowBlockXNum, allowBlockYNum, outsideBlockYNum, ref nowIndex);
-        //if(setNowIndex==false)
-        //{
-        //    ScrollHelper.SetNowIndex(ref nowIndex, 0);
-        //    setNowIndex = true;
-        //}
-
+        
     }
 }
