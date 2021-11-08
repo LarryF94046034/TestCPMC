@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-public class TestUScroll : UIBase
+
+public class UltimateScrollOne_NoMoveBlock : MonoBehaviour
 {
     public UScrollHelper UScrollHelper;
 
@@ -12,22 +13,13 @@ public class TestUScroll : UIBase
     public event Action endDragEvent;
     [SerializeField]           //DRAG IMAGE EVENT  sliderRectTran
     public RectTransform sliderRectTran;
-    [Header("New:Slider")]       //DRAG IMAGE EVENT dragImage
-    [SerializeField]
-    public Slider slider;
 
     [Header("PREFAB")]
     [SerializeField]
     private GameObject buttonPrefab;   //生成BTN
-    [SerializeField]
-    private GameObject rowPrefab;   //生成ROW
-
-
     [Header("Transform")]
     [SerializeField]
     private Transform fillParent;   //生成用父物件，生成在這下面
-    [SerializeField]
-    private Transform rowParent;   //生成用父物件，生成在這下面
     [Header("RectTransform")]
     [SerializeField]
     private RectTransform backgroundTran;   //背景 RT
@@ -56,8 +48,6 @@ public class TestUScroll : UIBase
 
     [SerializeField]
     public int nowIndex = 0;    //目前資料位置               INDEX
-    [SerializeField]
-    private float initialYPos=200;  //第一行高度
 
     [SerializeField]
     public Vector2 scrollRectValueChange = new Vector2();    //測試ScrollRect ValueChange
@@ -79,9 +69,9 @@ public class TestUScroll : UIBase
 
     [Header("NegativeGap")]
     [SerializeField]
-    private float positiveGap=0;   //超過正值 正定量 觸發
+    private float positiveGap = 0;   //超過正值 正定量 觸發
     [SerializeField]
-    private float negativeGap=0;   //超過負值 正定量 觸發
+    private float negativeGap = 0;   //超過負值 正定量 觸發
 
     [Header("Scrollbar")]
     [SerializeField]
@@ -97,42 +87,49 @@ public class TestUScroll : UIBase
     [SerializeField]
     private GameObject dragImage;
 
-    
-    
+    [Header("New:Slider")]       //DRAG IMAGE EVENT dragImage
+    [SerializeField]
+    private Slider slider;
+
 
     [Header("New:Data")]       //DRAG IMAGE EVENT dragImage
     [SerializeField]
-    private float mousePosY=0;
-
-    [Header("New:List")]       //DRAG IMAGE EVENT parentList
-    [SerializeField]
-    private List<GameObject> parentList = new List<GameObject>();
+    private float mousePosY = 0;
 
     #endregion
 
 
 
     // Start is called before the first frame update
-    void Start()
-    {
-        UScrollHelper.InitialGridWidthGridHeightSetGridPos(parentList,rowPrefab, rowParent, allowBlockXNum, allowBlockYNum, allowXSpacing, allowYSpacing, blockXWidth, blockYHeight,initialYPos);
-        UScrollHelper.InitialData(allowBlockXNum, allowBlockYNum + outsideBlockYNum * 2,btnCount, dataList);  //生成資料
-        UScrollHelper.AddButton(buttonPrefab, fillParent, allowBlockXNum, allowBlockYNum, btnList,parentList);    //生成BTN
-        //UScrollHelper.SetBackgroundAdaptive(backgroundTran, allowBlockXNum, allowBlockYNum, blockXWidth, blockYHeight, allowXSpacing, allowYSpacing);  //調整UI大小
-        //UScrollHelper.SetVerticalBarAdaptive(verticalBarTran,barXLength,allowBlockYNum, blockYHeight, allowYSpacing);   //直BAR 自適應
-        //UScrollHelper.SetVerticalBarPosition(verticalBarTran, (allowBlockXNum * blockXWidth + (allowBlockXNum + 1) * allowXSpacing)/*BACKGROUND寬*/, barXLength);   //直BAR X座標設定
+    //void Start()
+    //{
+    //    UScrollHelper.InitialData(allowBlockXNum, allowBlockYNum + outsideBlockYNum * 2, btnCount, dataList);  //生成資料
+    //    UScrollHelper.AddButton(buttonPrefab, fillParent, allowBlockXNum, allowBlockYNum, btnList);    //生成BTN
+    //    UScrollHelper.SetBackgroundAdaptive(backgroundTran, allowBlockXNum, allowBlockYNum, blockXWidth, blockYHeight, allowXSpacing, allowYSpacing);  //調整UI大小
+    //    UScrollHelper.SetVerticalBarAdaptive(verticalBarTran, barXLength, allowBlockYNum, blockYHeight, allowYSpacing);   //直BAR 自適應
+    //    UScrollHelper.SetVerticalBarPosition(verticalBarTran, (allowBlockXNum * blockXWidth + (allowBlockXNum + 1) * allowXSpacing)/*BACKGROUND寬*/, barXLength);   //直BAR X座標設定
 
-        //UScrollHelper.StartCalculateDrag(dragImage,slider,4000,0.3f,6.0f);  //綁定計算DRAG距離事件
+    //    //UScrollHelper.StartCalculateDrag(dragImage,slider,4000,0.3f,6.0f);  //綁定計算DRAG距離事件
 
-        UScrollHelper.StartDragByMousePos(dragImage);
+    //    UScrollHelper.StartDragByMousePos(dragImage);
 
 
-    }
+    //}
 
     // Update is called once per frame
     void Update()
     {
-        
+        //UScrollHelper.AddIndexUpdateData(ref negativeBuffer, negativeGap, ref nowIndex, allowBlockXNum, allowBlockYNum, dataList,btnList);    // 下捲更新DATA
+        //UScrollHelper.MinusIndexUpdateData(ref positiveBuffer, positiveGap, ref nowIndex, allowBlockXNum, allowBlockYNum, dataList,btnList);  //上捲更新DATA
+
+        //UScrollHelper.UpdateDataByBar(btnList, dataList,nowIndex, allowBlockXNum, allowBlockYNum, verticalBar.value);
+
+        #region 1
+        //UScrollHelper.StartCalculateDragByFrame(dragImage, slider, 2500, 500, 0.016f, mousePosY, 3.0f, 1460);  //綁定計算DRAG距離事件
+        //UScrollHelper.MousePosYUpdate(ref mousePosY);
+        #endregion
+
+        //UScrollHelper.StartDragByMousePos(dragImage, slider, 2500, 500, 0.016f, mousePosY, 1.0f, 1460);
     }
 
     public void UpdateDataByBarOnScroll()

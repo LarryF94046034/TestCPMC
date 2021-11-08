@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class UScrollHelper : MonoBehaviour
+using DG.Tweening;
+public class UScrollHelper : UIBase
 {
     public TestUScroll testUScroll;
     public void InitialData(int allowBlockXNum, int allowBlockYNum,int btnCount, List<int> dataList)
@@ -18,21 +20,70 @@ public class UScrollHelper : MonoBehaviour
             dataList.Add(i);
         }
     }
-    public void AddButton(GameObject btnPrefab, Transform parentTran, int allowBlockXNum, int allowBlockYNum, List<GameObject> btnList)
+    public void InitialGridWidthGridHeightSetGridPos(List<GameObject> rowList,GameObject rowPrefab,Transform parentTran,int allowBlockXNum,int allowBlockYNum,float xSpacing,float ySpacing,float blockXWidth,float blockYHeight,float initialYPos)
     {
+        List<RectTransform> rowRectTranList = new List<RectTransform>();
+        for(int i=0;i<allowBlockYNum;i++)
+        {
+            GameObject newRow = Instantiate(rowPrefab);
+            newRow.transform.SetParent(parentTran);     //生成ROW們
+            rowRectTranList.Add(newRow.GetComponent<RectTransform>());
+            rowList.Add(newRow);
+        }
+        for(int i=0;i<allowBlockYNum;i++)
+        {
+            rowRectTranList[i].sizeDelta = new Vector2(blockXWidth * allowBlockXNum + xSpacing * (allowBlockXNum + 1), blockYHeight);
+        }
+        for(int i=0;i<allowBlockYNum;i++)
+        {
+            rowRectTranList[i].anchoredPosition = new Vector3
+                (0,
+                initialYPos-blockYHeight*i-ySpacing*i);
+        }
+        
+    }
+    public void AddButton(GameObject btnPrefab, Transform parentTran, int allowBlockXNum, int allowBlockYNum, List<GameObject> btnList,
+        List<GameObject> parentList)
+    {
+        //int index = 0;
+        //for (int i = 0; i < allowBlockXNum; i++)
+        //{
+        //    for (int j = 0; j < allowBlockYNum; j++)
+        //    {
+        //        GameObject newBtn = Instantiate(btnPrefab);  //生成
+        //        newBtn.transform.SetParent(parentTran);    //SET父
+
+        //        newBtn.transform.GetChild(1).GetComponent<Text>().text = index.ToString();  //變數字         //單一GRIDLAYOUT加法
+        //        newBtn.gameObject.name = index.ToString();
+        //        index++;
+
+        //        btnList.Add(newBtn);
+        //    }
+        //}
+
+        int parentListIndex = 0;   //每列個後 +1
         int index = 0;
         for (int i = 0; i < allowBlockXNum; i++)
         {
             for (int j = 0; j < allowBlockYNum; j++)
             {
+                if (index>1&&index % allowBlockXNum == 0)
+                {
+                    parentListIndex++;
+                    Debug.Log(index);
+                }
                 GameObject newBtn = Instantiate(btnPrefab);  //生成
-                newBtn.transform.SetParent(parentTran);    //SET父
+                newBtn.transform.SetParent(parentList[parentListIndex].transform);    //SET父
 
-                newBtn.transform.GetChild(1).GetComponent<Text>().text = index.ToString();  //變數字
+                newBtn.transform.GetChild(1).GetComponent<Text>().text = index.ToString();  //變數字         //單一GRIDLAYOUT加法
                 newBtn.gameObject.name = index.ToString();
                 index++;
 
                 btnList.Add(newBtn);
+
+                
+                
+
             }
         }
     }
@@ -81,7 +132,7 @@ public class UScrollHelper : MonoBehaviour
         }
     }
 
-    private float scrollBarValueBuffer = 0f;
+    public float scrollBarValueBuffer = 0f;
     private bool sumOrNot = true;
     public float ScrollBarValueBuffer
     {
@@ -210,10 +261,107 @@ public class UScrollHelper : MonoBehaviour
             index++;
         }
     }
-
-
-    
-
     #endregion
 
+    #region ScrollView影響ScrollBar
+    public void BindScrollRectOnValueChange(ScrollRect scrollRect)
+    {
+        scrollRect.onValueChanged.AddListener(ScrollValue);
+    }
+    public void ScrollValue(Vector2 scrollValue)
+    {
+        Debug.Log("X:" + scrollValue.x);
+        Debug.Log("Y:" + scrollValue.y);
+    }
+    #endregion
+
+
+    #region DragImageEvent
+    private Vector2 startDragPos = new Vector2();   //只有DRAGIMAGEEVENT使用
+    private Vector2 endDragPos = new Vector2();     //只有DRAGIMAGEEVENT使用
+    private float xDragLength;
+    private float yDragLength;
+    public void StartCalculateDrag(GameObject dragImage,Slider slider,float imageHeight,float speed, float time)
+    {
+        AddBeginDragG(dragImage, BeginDragInitialDragBuffer);
+        AddEndDragG(dragImage, EndDragCalculateDragBuffer);
+        testUScroll.endDragEvent += () =>
+        {
+            //slider.value+=yDragLength/imageHeight*speed;
+            slider.DOValue(slider.value += yDragLength / imageHeight*speed, time);
+        };
+    }
+    public void BeginDragInitialDragBuffer(BaseEventData eventData)     //首尾DRAG POS計算
+    {
+        startDragPos = Input.mousePosition;
+    }
+    public void EndDragCalculateDragBuffer(BaseEventData eventData)
+    {
+        endDragPos = Input.mousePosition;
+        xDragLength = (endDragPos - startDragPos).x;
+        yDragLength = (endDragPos - startDragPos).y;
+        Debug.Log(new { xDragLength, yDragLength });
+
+        testUScroll.TriggerEndDragEvent();
+    }
+    private float dragAmount;  //只有DRAGIMAGEEVENT BYFRAME使用        //BYFRAME DRAGAMOUNT計算
+    public void StartCalculateDragByFrame(GameObject dragImage, Slider slider, float sliderSpeed, float timeSpeed, float time,float yPos,float frameCountRestrict,float sliderLength)
+    {
+        AddBeginDragG(dragImage, BeginDragStart);
+        AddEndDragG(dragImage, EndDragEnd);
+        if (dragPeriod==true&&Time.frameCount% frameCountRestrict==0)
+        {
+            //slider.DOValue(slider.value += (Input.mousePosition.y - yPos) / speed, time).SetEase(Ease.Linear);
+            slider.DOValue(slider.value += (Input.mousePosition.y - yPos) / sliderSpeed, sliderLength*((Input.mousePosition.y - yPos) / sliderSpeed/ timeSpeed)).SetEase(Ease.Linear); 
+        }
+        
+    }
+    public void MousePosYUpdate(ref float yPos)
+    {
+        yPos = Input.mousePosition.y;
+    }
+    private bool dragPeriod=false;
+    public void BeginDragStart(BaseEventData eventData)     //首尾DRAG POS計算
+    {
+        dragPeriod = true;
+    }
+    public void EndDragEnd(BaseEventData eventData)
+    {
+        dragPeriod = false;
+    }
+
+
+
+    private Vector2 distance = new Vector2();   //只有DRAGIMAGEEVENT BYMOUSEPOS使用
+    
+    public void StartDragByMousePos(GameObject dragImage)
+    {
+        AddBeginDragG(dragImage, BeginDragSetDistance);
+        AddDragG(dragImage, OnDragSetSliderPos);
+    }
+    public void BeginDragSetDistance(BaseEventData eventData)     //首尾DRAG POS計算
+    {
+        if ((Input.mousePosition.y + distance.y) < 386 && (Input.mousePosition.y + distance.y) > -74)
+        {
+            distance = testUScroll.sliderRectTran.anchoredPosition - (Vector2)Input.mousePosition;
+        }
+    }
+    public void OnDragSetSliderPos(BaseEventData eventData)
+    {
+        if((Input.mousePosition.y + distance.y) < 386 && (Input.mousePosition.y + distance.y) > -74)
+        {
+            testUScroll.sliderRectTran.anchoredPosition = new Vector2(testUScroll.sliderRectTran.anchoredPosition.x, (Input.mousePosition.y + distance.y));
+        }
+    }
+    public void EndDragSetSliderPos(BaseEventData eventData)
+    {
+        testUScroll.sliderRectTran.anchoredPosition = new Vector2(testUScroll.sliderRectTran.anchoredPosition.x, (Input.mousePosition.y + distance.y));    
+    }
+
+
+
+
+
+
+    #endregion
 }
