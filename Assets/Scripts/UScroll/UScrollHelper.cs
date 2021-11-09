@@ -435,7 +435,7 @@ public class UScrollHelper : UIBase
     {
         if ((Input.mousePosition.y + distance.y) < 10000000 && (Input.mousePosition.y + distance.y) >= -74)
         {
-            YBuffer = testUScroll.sliderRectTran.anchoredPosition.y;
+            yBuffer = testUScroll.sliderRectTran.anchoredPosition.y;
             distance = testUScroll.sliderRectTran.anchoredPosition - (Vector2)Input.mousePosition;
             beginY = testUScroll.sliderRectTran.anchoredPosition.y;
         }

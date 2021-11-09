@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SuperScrollRect : MonoBehaviour
+public class UltimateSuperScrollRect : MonoBehaviour
 {
     [SerializeField]
     private ScrollRect superScrollRect;   //SCROLLRECT
@@ -28,7 +29,7 @@ public class SuperScrollRect : MonoBehaviour
     [SerializeField]
     private List<GameObject> item;
     [SerializeField]
-    private int lastIndex=0;
+    private int lastIndex = 0;
     [SerializeField]
     private int firstIndex = 0;
 
@@ -47,17 +48,18 @@ public class SuperScrollRect : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        OnScrollMoveWidth();
+        //OnScrollMoveWidth();
+        
     }
 
 
     public void SetContentWidth()  //左對齊
     {
         //transform.GetComponent<RectTransform>().sizeDelta = new Vector2(itemWidth * maxItemNum / queue, (_obj.GetComponent<RectTransform>().sizeDelta.y + 20) * queue);  //設SCROLL RT SIZE
-        transform.GetComponent<RectTransform>().sizeDelta = new Vector2(/*Mathf.Ceil(maxItemNum / queue)*itemWidth*/transform.GetComponent<RectTransform>().sizeDelta.x, itemHeight * queue);  //設SCROLL RT SIZE
+        transform.GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Ceil(maxItemNum / queue)*itemWidth, itemHeight * queue);  //設SCROLL RT SIZE
 
         //superRect.sizeDelta = new Vector2(itemNum * itemWidth / queue, 0);
-        superRect.sizeDelta = new Vector2((Mathf.Ceil(itemNum / queue)* itemWidth), 0) ;  //設 CONTENT SIZE
+        superRect.sizeDelta = new Vector2((Mathf.Ceil(itemNum / queue) * itemWidth), 0);  //設 CONTENT SIZE
         Debug.Log(Mathf.Ceil(itemNum / queue));
 
         superRect.anchorMin = new Vector2(0, 0);   //設CONTENT ANCHOR
@@ -67,7 +69,7 @@ public class SuperScrollRect : MonoBehaviour
     public void InsCountitemWidth()
     {
         int needItemNum = Mathf.Clamp((int)maxItemNum, 0, (int)itemNum);
-        
+
         //for (int j = 0; j < needItemNum / queue + 1; j++)
         for (int j = 0; j < (Mathf.Ceil(itemNum / queue)); j++)
         {
@@ -98,49 +100,47 @@ public class SuperScrollRect : MonoBehaviour
 
     private void OnScrollMoveWidth()
     {
-        //Debug.Log("ANCHORPOS"+Mathf.Abs(superRect.anchoredPosition.x));
-        //Debug.Log("INDEX"+itemWidth * (firstIndex / queue));
-        //Debug.Log(lastIndex);
-        //Debug.Log("TRUE" + (Mathf.Abs(superRect.anchoredPosition.x) > itemWidth * (firstIndex / queue) && lastIndex < itemNum - 1));
-        //从左往右
-        while (Mathf.Abs(superRect.anchoredPosition.x) > itemWidth * (firstIndex / queue) && lastIndex < itemNum - 1)
-        {
-            for (int i = 0; i < queue; i++)
-            {
-                GameObject _first = item[0];
-                RectTransform _firstRect = _first.GetComponent<RectTransform>();
-                item.RemoveAt(0);
-                item.Add(_first);
-                _firstRect.anchoredPosition = new Vector2(((lastIndex + 1) / queue) * itemWidth, _firstRect.anchoredPosition.y);
-                firstIndex++;
-                lastIndex++;
-
-                ////修改显示
-                //_first.name = lastIndex.ToString();
-                //_first.transform.Find("Text").GetComponent<Text>().text = _first.name;
-
-            }
-        }
-        ////从右往左
-        //while (Mathf.Abs(superRect.anchoredPosition.x) < itemWidth * firstIndex / queue && firstIndex > 0)
+        Debug.Log("ANCHORPOS" + Mathf.Abs(superRect.anchoredPosition.x));
+        Debug.Log("INDEX" + itemWidth * (firstIndex / queue));
+        Debug.Log(lastIndex);
+        Debug.Log("TRUE" + (Mathf.Abs(superRect.anchoredPosition.x) > itemWidth * (firstIndex / queue) && lastIndex < itemNum - 1));
+        ////从左往右
+        //while (Mathf.Abs(superRect.anchoredPosition.x) > itemWidth * (firstIndex / queue) && lastIndex < itemNum - 1)
         //{
         //    for (int i = 0; i < queue; i++)
         //    {
-        //        GameObject _last = item[item.Count - 1];
-        //        RectTransform _lastRect = _last.GetComponent<RectTransform>();
-        //        item.RemoveAt(item.Count - 1);
-        //        item.Insert(0, _last);
-        //        _lastRect.anchoredPosition = new Vector2(((firstIndex - 1) / queue) * itemWidth, _lastRect.anchoredPosition.y);
+        //        GameObject _first = item[0];
+        //        RectTransform _firstRect = _first.GetComponent<RectTransform>();
+        //        item.RemoveAt(0);
+        //        item.Add(_first);
+        //        _firstRect.anchoredPosition = new Vector2(((lastIndex + 1) / queue) * itemWidth, _firstRect.anchoredPosition.y);
+        //        firstIndex++;
+        //        lastIndex++;
 
-        //        firstIndex--;
-        //        lastIndex--;
-        //        //修改显示
-        //        _last.name = firstIndex.ToString();
-        //        _last.transform.Find("Text").GetComponent<Text>().text = _last.name;
+        //        ////修改显示
+        //        //_first.name = lastIndex.ToString();
+        //        //_first.transform.Find("Text").GetComponent<Text>().text = _first.name;
+
         //    }
-
         //}
+        //从右往左
+        while (Mathf.Abs(superRect.anchoredPosition.x) < itemWidth * firstIndex / queue && firstIndex > 0)
+        {
+            for (int i = 0; i < queue; i++)
+            {
+                GameObject _last = item[item.Count - 1];
+                RectTransform _lastRect = _last.GetComponent<RectTransform>();
+                item.RemoveAt(item.Count - 1);
+                item.Insert(0, _last);
+                _lastRect.anchoredPosition = new Vector2(((firstIndex - 1) / queue) * itemWidth, _lastRect.anchoredPosition.y);
+
+                firstIndex--;
+                lastIndex--;
+                //修改显示
+                _last.name = firstIndex.ToString();
+                _last.transform.Find("Text").GetComponent<Text>().text = _last.name;
+            }
+
+        }
     }
-
-
 }
