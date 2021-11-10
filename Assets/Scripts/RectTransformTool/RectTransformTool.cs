@@ -6,12 +6,26 @@ using UnityEngine.UI;
 namespace CHENKAIHSUN
 {
     public class RectTransformTool : MonoBehaviour
-    {
-        public static RectTransformTool Instance;
-        private void Awake()
+    {   
+        static RectTransformTool _instance;
+        public static RectTransformTool Instance
         {
-            Instance = this;
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType(typeof(RectTransformTool)) as RectTransformTool;
+                    if (_instance == null)
+                    {
+                        GameObject go = new GameObject("RectTransformTool");
+                        _instance = go.AddComponent<RectTransformTool>();
+                    }
+                }
+                return _instance;
+            }
         }
+        
+
         public void SetSize(RectTransform rectTran, float x, float y)
         {
             rectTran.sizeDelta = new Vector2(x, y);
@@ -52,7 +66,16 @@ namespace CHENKAIHSUN
             }
         }
         #endregion
-
+        #region SetAnchorPosition
+        public void SetPosX(RectTransform rectTran, float xPos)
+        {
+            rectTran.anchoredPosition = new Vector2(xPos, rectTran.anchoredPosition.y);
+        }
+        public void SetPosY(RectTransform rectTran, float yPos)
+        {
+            rectTran.anchoredPosition = new Vector2(rectTran.anchoredPosition.x, yPos);
+        }
+        #endregion
 
     }
 }
