@@ -241,17 +241,17 @@ public class SuperScrollHelper : MonoBehaviour
         //transform.GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Ceil(maxItemNum / queue) * itemWidth, itemHeight * queue);  //設SCROLL RT SIZE
         float sizeX = Mathf.Ceil(maxItemNum / queue) * itemWidth;
         float sizeY = itemHeight * queue;
-        RectTransformTool.Instance.SetSize(scrollRectTran, sizeX, sizeY);     //MAXITEMNUM設定最大SCROLL VIEW
+        RectTransformUtil.Instance.SetSize(scrollRectTran, sizeX, sizeY);     //MAXITEMNUM設定最大SCROLL VIEW
 
         //superRect.sizeDelta = new Vector2(itemNum * itemWidth / queue, 0);
         //superRect.sizeDelta = new Vector2((Mathf.Ceil(itemNum / queue) * itemWidth), 0);  //設 CONTENT SIZE
         float sizeX1 = (Mathf.Ceil(itemNum / queue) * itemWidth);
         float sizeY1 = 0;
-        RectTransformTool.Instance.SetSize(contentRectTran, sizeX1, sizeY1); //ITEMNUM設定可視CONTENT
+        RectTransformUtil.Instance.SetSize(contentRectTran, sizeX1, sizeY1); //ITEMNUM設定可視CONTENT
 
         //superRect.anchorMin = new Vector2(0, 0);   //設CONTENT ANCHOR
         //superRect.anchorMax = new Vector2(0, 1);
-        RectTransformTool.Instance.SetAnchor(contentRectTran, 0, 0, 0, 1);
+        RectTransformUtil.Instance.SetAnchor(contentRectTran, 0, 0, 0, 1);
     }
 
     public void InsCountitemWidth(GameObject instanPrefab, RectTransform contentRectTran, List<GameObject> itemList,List<int> dataList, float itemNum, float maxItemNum, float queue, float itemWidth, float itemHeight, ref int lastIndex)
@@ -297,11 +297,11 @@ public class SuperScrollHelper : MonoBehaviour
 
     public void LockScrollViewXMin(RectTransform contentTran, float maxX)
     {
-        RectTransformTool.Instance.XPosCeilingLock(contentTran, maxX);
+        RectTransformUtil.Instance.XPosCeilingLock(contentTran, maxX);
     }
     public void LockScrollViewXMax(RectTransform contentTran, float minX)
     {
-        RectTransformTool.Instance.XPosFloorLock(contentTran, minX);
+        RectTransformUtil.Instance.XPosFloorLock(contentTran, minX);
     }
 
     public void OnScrollMoveWidth(RectTransform scrollRectTran, RectTransform contentRectTran, List<GameObject> itemList, List<int> dataList, float itemNum, float maxItemNum, float queue, float itemWidth, float itemHeight, ref int firstIndex, ref int lastIndex, ref int nowIndex, ref float xPositivePosBuffer, ref float xNegativePosBuffer)

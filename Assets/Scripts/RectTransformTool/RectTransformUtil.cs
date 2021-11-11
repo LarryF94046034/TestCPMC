@@ -5,20 +5,20 @@ using UnityEngine.UI;
 
 namespace CHENKAIHSUN
 {
-    public class RectTransformTool : MonoBehaviour
+    public class RectTransformUtil : MonoBehaviour
     {   
-        static RectTransformTool _instance;
-        public static RectTransformTool Instance
+        static RectTransformUtil _instance;
+        public static RectTransformUtil Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = FindObjectOfType(typeof(RectTransformTool)) as RectTransformTool;
+                    _instance = FindObjectOfType(typeof(RectTransformUtil)) as RectTransformUtil;
                     if (_instance == null)
                     {
-                        GameObject go = new GameObject("RectTransformTool");
-                        _instance = go.AddComponent<RectTransformTool>();
+                        GameObject go = new GameObject("RectTransformUtil");
+                        _instance = go.AddComponent<RectTransformUtil>();
                     }
                 }
                 return _instance;
@@ -74,6 +74,10 @@ namespace CHENKAIHSUN
         public void SetPosY(RectTransform rectTran, float yPos)
         {
             rectTran.anchoredPosition = new Vector2(rectTran.anchoredPosition.x, yPos);
+        }
+        public void SetPosEqualOtherTran(RectTransform rectTran,RectTransform otherTran)
+        {
+            rectTran.anchoredPosition = new Vector2(otherTran.anchoredPosition.x, otherTran.anchoredPosition.y);
         }
         #endregion
 

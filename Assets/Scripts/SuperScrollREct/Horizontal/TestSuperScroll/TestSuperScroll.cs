@@ -26,7 +26,9 @@ public class TestSuperScroll : MonoBehaviour
     [SerializeField]
     private float maxItemNum;
     [SerializeField]
-    private float queue;
+    private float queue;       //橫向排
+    [SerializeField]
+    private float viewYNum;    //直向排
     [SerializeField]
     private float revealXNum;
     [SerializeField]
